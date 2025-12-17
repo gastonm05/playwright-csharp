@@ -24,7 +24,7 @@ public class BrowserManager : IAsyncDisposable
         _browser = browserType switch
         {
             "firefox" => await playwright.Firefox.LaunchAsync(new BrowserTypeLaunchOptions { Headless = TestConfiguration.IsHeadless() }),
-            "webkit" => await playwright.WebKit.LaunchAsync(new BrowserTypeLaunchOptions { Headless = TestConfiguration.IsHeadless() }),
+            "chromium" => await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = TestConfiguration.IsHeadless() }),
             _ => await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = TestConfiguration.IsHeadless() })
         };
 

@@ -1,9 +1,9 @@
+using System.Configuration;
 using Microsoft.Extensions.Configuration;
-using Serilog;
 
 namespace Common.Config;
 
-public class TestConfiguration
+public static class TestConfiguration
 {
     private static IConfiguration? _configuration;
 
@@ -12,8 +12,15 @@ public class TestConfiguration
         if (_configuration != null)
             return _configuration;
 
+        // Get the root directory (where the solution is)
+        var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "..");
+        if (!Directory.Exists(Path.Combine(rootPath, "appsettings.json")))
+        {
+            rootPath = Directory.GetCurrentDirectory();
+        }
+
         _configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(rootPath)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development"}.json", optional: true)
             .AddEnvironmentVariables()
@@ -30,8 +37,20 @@ public class TestConfiguration
 
     public static string GetApiBaseUrl()
     {
-        var config = GetConfiguration();
-        return config["AppSettings:ApiBaseUrl"] ?? "https://api.example.com";
+        // Try to get from config first, then default to JSONPlaceholder
+        try
+        {
+            var config = GetConfiguration();
+            var url = config["AppSettings:ApiBaseUrl"];
+            if (!string.IsNullOrEmpty(url))
+                return url;
+        }
+        catch
+        {
+            // If config loading fails, use default
+        }
+        
+        return "https://jsonplaceholder.typicode.com";
     }
 
     public static string GetBrowser()
@@ -50,5 +69,23 @@ public class TestConfiguration
     {
         var config = GetConfiguration();
         return int.Parse(config["AppSettings:Timeout"] ?? "30000");
+    }
+
+    public static string GetValidUsername()
+    {
+        var config = GetConfiguration();
+        return config["TestData:ValidUsername"] ?? "testuser";
+    }
+
+    public static string GetValidPassword()
+    {
+        var config = GetConfiguration();
+        return config["TestData:ValidPassword"] ?? "testpassword";
+    }
+
+    public static string GetInternetHomeUrl()
+    {
+        var config = GetConfiguration();
+        return config["TestData:InternetHomeUrl"] ?? "https://the-internet.herokuapp.com/";
     }
 }

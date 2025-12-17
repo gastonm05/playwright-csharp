@@ -17,20 +17,20 @@ public class SampleAPITests
     [Test]
     public async Task SampleTest_GetRequest()
     {
-        Assert.IsNotNull(_apiClient);
+        Assert.That(_apiClient, Is.Not.Null);
         
-        var response = await _apiClient.GetAsync("/users");
+        var response = await _apiClient!.GetAsync("/users");
         
-        Assert.That((int)response.StatusCode, Is.EqualTo(200).Or.GreaterThanOrEqualTo(200).And.LessThan(300));
+        Assert.That((int)response.StatusCode, Is.GreaterThanOrEqualTo(200).And.LessThan(300));
     }
 
     [Test]
     public async Task SampleTest_PostRequest()
     {
-        Assert.IsNotNull(_apiClient);
+        Assert.That(_apiClient, Is.Not.Null);
         
         var body = new { name = "Test User", email = "test@example.com" };
-        var response = await _apiClient.PostAsync("/users", body);
+        var response = await _apiClient!.PostAsync("/users", body);
         
         Assert.That((int)response.StatusCode, Is.GreaterThanOrEqualTo(200).And.LessThan(300)
             .Or.EqualTo(400).Or.EqualTo(401).Or.EqualTo(403));
