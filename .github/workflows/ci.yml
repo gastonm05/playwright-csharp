@@ -29,7 +29,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
     
     - name: Install Playwright browsers
-      run: pwsh bin/Release/net8.0/playwright.ps1 install
+      run: dotnet playwright install
     
     - name: Run API Tests
       run: dotnet test APITests/APITests.csproj --no-build --configuration Release --logger "console;verbosity=detailed"

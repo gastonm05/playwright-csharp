@@ -1,235 +1,396 @@
 # Playwright C# Test Automation Framework
 
-A comprehensive test automation framework built with Playwright, C#, NUnit, and RestSharp for both API and UI testing with GitHub Actions CI/CD integration.
+A comprehensive test automation framework built with **Playwright**, **C#**, **NUnit**, and **RestSharp** for both **API** and **UI** testing with **GitHub Actions CI/CD** integration.
 
-## Project Structure
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Running Tests](#running-tests)
+- [Configuration](#configuration)
+- [CI/CD](#cicd)
+- [Best Practices](#best-practices)
+- [Troubleshooting](#troubleshooting)
+
+## 🎯 Overview
+
+This framework demonstrates enterprise-level test automation with:
+
+✅ **Page Object Model (POM)** pattern for maintainable UI tests  
+✅ **Organized structure** with shared utilities and configuration  
+✅ **Environment-specific configs** (Development, Production, etc.)  
+✅ **Externalized test data** for easy management  
+✅ **GitHub Actions CI/CD** for automated test execution  
+✅ **Comprehensive logging** with Serilog  
+✅ **Support for multiple browsers** (Chromium, Firefox, WebKit)  
+
+## 📁 Project Structure
 
 ```
 playwright-csharp/
-├── APITests/                 # API test project
-│   ├── Tests/               # API test files
+├── APITests/                         # API test project
+│   ├── Models/                       # Data models (User, Post, Album, Comment)
+│   ├── Tests/                        # Test classes
+│   │   ├── JSONPlaceholderUserTests.cs
+│   │   ├── JSONPlaceholderPostTests.cs
+│   │   ├── JSONPlaceholderAlbumTests.cs
+│   │   ├── JSONPlaceholderCommentTests.cs
+│   │   └── QuickAPITest.cs
 │   └── APITests.csproj
-├── UITests/                 # UI test project
-│   ├── Pages/               # Page Object Model classes
-│   ├── Tests/               # UI test files
+├── UITests/                          # UI test project
+│   ├── Pages/                        # Page Object Models
+│   │   ├── HomePage.cs              # Home page interactions
+│   │   ├── LoginPage.cs             # Login form interactions
+│   │   └── SecurePage.cs            # Secure area interactions
+│   ├── Tests/                        # Test classes
+│   │   ├── LoginTests.cs            # Login workflow tests
+│   │   └── SampleUITests.cs
 │   └── UITests.csproj
-├── Common/                  # Shared utilities and configurations
-│   ├── Config/              # Configuration management
-│   │   └── TestConfiguration.cs
-│   ├── Utils/               # Common utilities
-│   │   ├── BrowserManager.cs
-│   │   ├── ApiClient.cs
-│   │   └── LoggerSetup.cs
+├── Common/                           # Shared utilities
+│   ├── Config/
+│   │   └── TestConfiguration.cs     # Centralized configuration
+│   ├── Utils/
+│   │   ├── BrowserManager.cs        # Browser lifecycle management
+│   │   ├── ApiClient.cs             # HTTP client for API tests
+│   │   └── LoggerSetup.cs           # Logging configuration
 │   └── Common.csproj
-├── .github/workflows/       # GitHub Actions CI pipeline
-│   └── ci.yml
-├── appsettings.json         # Default configuration
-├── appsettings.Development.json
-├── appsettings.Production.json
-└── PlaywrightTests.sln      # Solution file
+├── .github/workflows/
+│   └── ci.yml                        # GitHub Actions CI/CD pipeline
+├── appsettings.json                  # Base configuration
+├── appsettings.Development.json      # Development environment config
+├── appsettings.Production.json       # Production environment config
+├── TESTING.md                        # Detailed testing guide
+├── SETUP.md                          # Setup and installation guide
+├── README.md                         # This file
+└── PlaywrightTests.sln               # Visual Studio solution
 ```
 
-## Prerequisites
+## ✅ Prerequisites
 
-- .NET 8.0 SDK or higher
-- Visual Studio 2022 or Visual Studio Code
-- Git
+- **.NET 8.0+** - [Download](https://dotnet.microsoft.com/download)
+- **Git** - Version control system
+- **PowerShell 7+** - For Playwright browser installation
+- **Visual Studio Code** or **Visual Studio 2022** (optional but recommended)
 
-## Installation
+## 🚀 Quick Start
 
-1. Clone the repository:
+### 1. Clone Repository
 ```bash
 git clone <repository-url>
 cd playwright-csharp
 ```
 
-2. Restore NuGet packages:
+### 2. Restore Dependencies
 ```bash
 dotnet restore
 ```
 
-3. Install Playwright browsers:
+### 3. Install Playwright Browsers
 ```bash
-dotnet build
-pwsh bin/Debug/net8.0/playwright.ps1 install
+dotnet playwright install
 ```
 
-## Configuration
+### 4. Build Solution
+```bash
+dotnet build
+```
 
-The framework uses `appsettings.json` for configuration. Modify the settings as needed:
-
-- **BaseUrl**: The base URL for UI tests (default: https://example.com)
-- **ApiBaseUrl**: The base URL for API tests (default: https://api.example.com)
-- **Browser**: Browser type - chromium, firefox, or webkit (default: chromium)
-- **Headless**: Run browser in headless mode (default: true)
-- **Timeout**: Default timeout in milliseconds (default: 30000)
-
-## Running Tests
-
-### Run all tests:
+### 5. Run Tests
 ```bash
 dotnet test
 ```
 
-### Run UI tests only:
+For more detailed setup instructions, see [SETUP.md](./SETUP.md).
+
+## 🧪 Running Tests
+
+### Run All Tests
 ```bash
-dotnet test UITests/UITests.csproj
+dotnet test
 ```
 
-### Run API tests only:
+### Run API Tests Only
 ```bash
 dotnet test APITests/APITests.csproj
 ```
 
-### Run with specific configuration:
+### Run UI Tests Only
 ```bash
-dotnet test --configuration Release
+dotnet test UITests/UITests.csproj
 ```
 
-### Run with detailed logging:
+### Run Specific Test Class
 ```bash
-dotnet test --logger "console;verbosity=detailed"
+# Login UI tests
+dotnet test --filter "LoginTests"
+
+# JSONPlaceholder API tests
+dotnet test --filter "JSONPlaceholderUserTests"
 ```
 
-## Project Features
-
-### Common Features
-- **TestConfiguration**: Centralized configuration management
-- **BrowserManager**: Browser and page lifecycle management
-- **ApiClient**: RESTful API client for API testing
-- **LoggerSetup**: Serilog-based logging
-
-### UI Testing
-- Playwright browser automation
-- Page Object Model pattern support
-- Multi-browser support (Chromium, Firefox, WebKit)
-- Headless and headed mode support
-
-### API Testing
-- RestSharp for HTTP requests
-- Support for GET, POST, PUT, DELETE operations
-- JSON body serialization
-- Response status code assertions
-
-## Dependencies
-
-- **Microsoft.Playwright**: ^1.48.0 - Browser automation
-- **RestSharp**: ^107.3.0 - HTTP client for API testing
-- **NUnit**: ^4.1.0 - Unit testing framework
-- **NUnit3TestAdapter**: ^4.6.1 - Test adapter for Visual Studio
-- **Microsoft.NET.Test.Sdk**: ^17.11.1 - Test SDK
-- **Serilog**: ^4.2.0 - Logging framework
-- **Microsoft.Extensions.Configuration**: ^8.0.0 - Configuration management
-
-## CI/CD Pipeline
-
-The project includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that:
-
-1. Triggers on push and pull requests to main and develop branches
-2. Sets up .NET 8.0
-3. Restores dependencies
-4. Builds the solution
-5. Installs Playwright browsers
-6. Runs API tests
-7. Runs UI tests
-8. Uploads test results as artifacts
-
-### Triggering CI Pipeline
-
-Push your changes to the repository:
+### Run Specific Test Method
 ```bash
-git add .
-git commit -m "Your commit message"
-git push origin main
+dotnet test --filter "Test_LoginWithValidCredentials_HappyPath"
 ```
 
-## Creating New Tests
+### Run with Detailed Output
+```bash
+dotnet test --verbosity detailed
+```
 
-### UI Test Example
-```csharp
-[TestFixture]
-public class MyUITests
+### Run with Code Coverage
+```bash
+dotnet test /p:CollectCoverage=true /p:CoverageFormat=opencover
+```
+
+### Run in Headed Mode (show browser)
+Set in `appsettings.Development.json`:
+```json
 {
-    private BrowserManager _browserManager;
-    private IPage _page;
-
-    [SetUp]
-    public async Task Setup()
-    {
-        _browserManager = new BrowserManager();
-        _page = await _browserManager.GetPageAsync();
-    }
-
-    [TearDown]
-    public async Task Teardown()
-    {
-        await _browserManager.DisposeAsync();
-    }
-
-    [Test]
-    public async Task MyTest()
-    {
-        await _page.GotoAsync("https://example.com");
-        // Your test logic here
-    }
+  "AppSettings": {
+    "Headless": false
+  }
 }
 ```
 
-### API Test Example
-```csharp
-[TestFixture]
-public class MyAPITests
+## ⚙️ Configuration
+
+### Configuration Files
+
+Configuration is managed through JSON files with environment-specific overrides:
+
+#### Base Configuration (`appsettings.json`)
+```json
 {
-    private ApiClient _apiClient;
-
-    [SetUp]
-    public void Setup()
-    {
-        _apiClient = new ApiClient();
-    }
-
-    [Test]
-    public async Task MyTest()
-    {
-        var response = await _apiClient.GetAsync("/endpoint");
-        Assert.That(response.StatusCode, Is.EqualTo(200));
-    }
+  "AppSettings": {
+    "BaseUrl": "https://example.com",
+    "ApiBaseUrl": "https://jsonplaceholder.typicode.com",
+    "Browser": "chromium",
+    "Headless": true,
+    "Timeout": 30000
+  },
+  "TestData": {
+    "ValidUsername": "tomsmith",
+    "ValidPassword": "SuperSecretPassword!",
+    "InternetHomeUrl": "https://the-internet.herokuapp.com/"
+  }
 }
 ```
 
-## Best Practices
+#### Using Configuration in Code
+```csharp
+using Common.Config;
 
-1. **Page Object Model**: Use the `Pages/` directory to create page objects for UI tests
-2. **Configuration**: Store sensitive data in environment variables or secure configuration
-3. **Logging**: Use the configured logger for debugging and monitoring
-4. **Async/Await**: Always use async operations with Playwright and RestSharp
-5. **Assertions**: Use NUnit assertions for consistent test validation
-6. **Test Organization**: Group related tests in the same test class with [TestFixture]
-
-## Troubleshooting
-
-### Playwright browsers not found
-```bash
-pwsh bin/Debug/net8.0/playwright.ps1 install
+// Access configuration values
+string username = TestConfiguration.GetValidUsername();          // "tomsmith"
+string password = TestConfiguration.GetValidPassword();          // "SuperSecretPassword!"
+string browser = TestConfiguration.GetBrowser();                 // "chromium"
+bool headless = TestConfiguration.IsHeadless();                  // true
+int timeout = TestConfiguration.GetTimeout();                    // 30000
+string url = TestConfiguration.GetInternetHomeUrl();             // "https://the-internet.herokuapp.com/"
 ```
 
-### Configuration not loading
-Ensure `appsettings.json` is in the root directory and the working directory is set correctly.
+### Environment Variables
 
-### Port already in use
-Update the port numbers in `appsettings.Development.json` if ports are already in use.
+Override settings via environment variables:
+```bash
+set ASPNETCORE_ENVIRONMENT=Production
+set "AppSettings:Browser=firefox"
+set "AppSettings:Headless=false"
 
-## Contributing
+dotnet test
+```
 
-1. Create a feature branch
-2. Make your changes
-3. Push to the repository
-4. Create a pull request
+## 🔄 CI/CD
 
-## License
+### GitHub Actions Workflow
 
-This project is licensed under the MIT License.
+Tests run automatically on:
+- **Push** to `main` or `develop` branches
+- **Pull requests** to `main` or `develop` branches
 
-## Support
+**Workflow file:** `.github/workflows/ci.yml`
 
-For issues and questions, please create an issue in the repository or contact the development team.
+**Pipeline Steps:**
+1. Checkout code
+2. Setup .NET 8.0
+3. Restore dependencies
+4. Build in Release mode
+5. Install Playwright browsers
+6. Run API tests
+7. Run UI tests
+8. Upload test results as artifacts
+
+### Simulate CI Locally
+```bash
+# Build in Release mode
+dotnet build --configuration Release
+
+# Install browsers
+dotnet playwright install
+
+# Run all tests
+dotnet test --configuration Release --logger "console;verbosity=detailed"
+```
+
+## 📝 Test Examples
+
+### UI Test - Login Flow
+```csharp
+[Test]
+public async Task Test_LoginWithValidCredentials_HappyPath()
+{
+    // Arrange
+    await _loginPage.NavigateAsync();
+    await _loginPage.IsLoadedAsync();
+
+    // Act
+    await _loginPage.LoginAsync("tomsmith", "SuperSecretPassword!");
+    await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+    // Assert
+    var isMessageVisible = await _securePage.IsSuccessMessageVisibleAsync();
+    var successMessage = await _securePage.GetSuccessMessageAsync();
+    
+    Assert.That(isMessageVisible, Is.True);
+    Assert.That(successMessage, Does.Contain("You logged into a secure area"));
+}
+```
+
+### API Test - Get User
+```csharp
+[Test]
+public async Task GetUser_ReturnsValidUser()
+{
+    // Arrange
+    var client = new ApiClient();
+
+    // Act
+    var user = await client.GetAsync<User>("/users/1");
+
+    // Assert
+    Assert.That(user, Is.Not.Null);
+    Assert.That(user.Id, Is.EqualTo(1));
+    Assert.That(user.Name, Is.Not.Null);
+}
+```
+
+## 🛠️ Key Classes
+
+### TestConfiguration
+Centralized configuration management with environment-specific overrides.
+
+**Location:** `Common/Config/TestConfiguration.cs`
+
+**Key Methods:**
+- `GetValidUsername()` - Get test username from config
+- `GetValidPassword()` - Get test password from config
+- `GetInternetHomeUrl()` - Get test application URL
+- `GetBrowser()` - Get browser type (chromium, firefox, webkit)
+- `IsHeadless()` - Get headless mode setting
+- `GetTimeout()` - Get timeout in milliseconds
+
+### BrowserManager
+Manages Playwright browser and page lifecycle.
+
+**Location:** `Common/Utils/BrowserManager.cs`
+
+**Key Methods:**
+- `GetPageAsync()` - Create and return a new browser page
+- `DisposeAsync()` - Close browser and clean up resources
+
+### ApiClient
+HTTP client for API testing.
+
+**Location:** `Common/Utils/ApiClient.cs`
+
+**Key Methods:**
+- `GetAsync<T>(url)` - Make GET request
+- `PostAsync<T>(url, data)` - Make POST request
+- `PutAsync<T>(url, data)` - Make PUT request
+- `DeleteAsync(url)` - Make DELETE request
+
+## ✨ Best Practices
+
+1. **Page Object Model** - Encapsulate page interactions in POM classes
+2. **Externalize Test Data** - Use configuration instead of hardcoding values
+3. **Descriptive Test Names** - Use pattern `Test_Feature_ExpectedResult`
+4. **Arrange-Act-Assert** - Keep clear test structure
+5. **Explicit Waits** - Use Playwright's built-in wait mechanisms
+6. **Logging** - Log meaningful information for debugging
+7. **Resource Cleanup** - Always dispose resources in teardown
+8. **No Test Dependencies** - Each test should be independent
+9. **Environment Agnostic** - Use configuration for environment differences
+
+## 🔧 Troubleshooting
+
+### Playwright Browsers Not Installed
+```bash
+dotnet playwright install
+```
+
+### Configuration Not Loading
+Ensure `appsettings.json` files are in the test output directory:
+```bash
+copy appsettings.json UITests\bin\Debug\net8.0\
+copy appsettings.Development.json UITests\bin\Debug\net8.0\
+```
+
+### Tests Timing Out
+Increase timeout in `appsettings.json`:
+```json
+{
+  "AppSettings": {
+    "Timeout": 60000
+  }
+}
+```
+
+### Port Already in Use
+Update port numbers in `appsettings.Development.json`:
+```json
+{
+  "AppSettings": {
+    "BaseUrl": "https://localhost:7002"
+  }
+}
+```
+
+### Browser Fails to Launch
+Ensure Playwright browsers are installed and system has required dependencies:
+```bash
+# Reinstall browsers
+dotnet playwright install --with-deps
+```
+
+## 📚 Additional Resources
+
+- [SETUP.md](./SETUP.md) - Detailed setup instructions
+- [TESTING.md](./TESTING.md) - Comprehensive testing guide
+- [Playwright Documentation](https://playwright.dev/dotnet/)
+- [NUnit Documentation](https://nunit.org/documentation/)
+- [RestSharp Documentation](https://restsharp.dev/)
+
+## 📞 Support
+
+For issues or questions:
+1. Check the troubleshooting section above
+2. Review [SETUP.md](./SETUP.md) and [TESTING.md](./TESTING.md)
+3. Check test output and GitHub Actions logs
+4. Review framework documentation
+
+## 📄 License
+
+[Your License Here]
+
+## 👤 Authors
+
+- **Gaston** - Project Maintainer
+
+---
+
+**Last Updated:** December 2025  
+**Framework Version:** 1.0  
+**.NET Version:** 8.0+

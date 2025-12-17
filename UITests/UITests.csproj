@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Playwright" Version="1.48.0" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.57.0" />
+    <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.57.0" />
     <PackageReference Include="NUnit" Version="4.1.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
@@ -19,5 +20,18 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
+
+  <!-- Copy configuration files to output directory -->
+  <ItemGroup>
+    <None Include="..\appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\appsettings.Development.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\appsettings.Production.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Install Playwright browsers after build -->
+  <Target Name="InstallPlaywrightBrowsers" AfterTargets="Build">
+    <Message Text="Installing Playwright browsers..." Importance="high" />
+    <Exec Command="playwright install" ContinueOnError="true" />
+  </Target>
 
 </Project>
