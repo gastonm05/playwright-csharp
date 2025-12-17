@@ -48,6 +48,9 @@ public class LoginTests
         await _homePage!.NavigateAsync();
         var isLoaded = await _homePage.IsLoadedAsync();
         var heading = await _homePage.GetHeadingAsync();
+        
+        // Console.WriteLine("\n✅ Browser Opened with Inspector...");
+        // await _page!.PauseAsync(); // Inspector is Opened here
 
         // Assert
         Assert.That(isLoaded, Is.True, "Home page should be loaded");

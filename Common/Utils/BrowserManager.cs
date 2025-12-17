@@ -16,23 +16,31 @@ public class BrowserManager : IAsyncDisposable
             return _page;
 
         LoggerSetup.ConfigureLogger();
+        
+        var isHeadless = TestConfiguration.IsHeadless();
+        var browserType = TestConfiguration.GetBrowser().ToLower();
+        
+        Log.Information("=== BROWSER CONFIGURATION ===");
+        Log.Information($"Browser Type: {browserType}");
+        Log.Information($"Headless Mode: {isHeadless}");
+        Log.Information($"Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+        Log.Information("=============================");
         Log.Information("Initializing browser...");
 
         var playwright = await Playwright.CreateAsync();
-        var browserType = TestConfiguration.GetBrowser().ToLower();
 
         _browser = browserType switch
         {
-            "firefox" => await playwright.Firefox.LaunchAsync(new BrowserTypeLaunchOptions { Headless = TestConfiguration.IsHeadless() }),
-            "chromium" => await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = TestConfiguration.IsHeadless() }),
-            _ => await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = TestConfiguration.IsHeadless() })
+            "firefox" => await playwright.Firefox.LaunchAsync(new BrowserTypeLaunchOptions { Headless = isHeadless }),
+            "chromium" => await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = isHeadless }),
+            _ => await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = isHeadless })
         };
 
         _context = await _browser.NewContextAsync();
         _page = await _context.NewPageAsync();
         _page.SetDefaultTimeout(TestConfiguration.GetTimeout());
 
-        Log.Information($"Browser initialized with {browserType}");
+        Log.Information($"✅ Browser initialized with {browserType} (Headless: {isHeadless})");
         return _page;
     }
 
