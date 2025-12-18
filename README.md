@@ -155,6 +155,26 @@ Set in `appsettings.Development.json`:
 }
 ```
 
+### Use Playwright Inspector for Interactive Debugging
+Add `await _page!.PauseAsync();` in your tests to pause execution and open the Playwright Inspector:
+
+```csharp
+[Test]
+public async Task Test_WithInspector()
+{
+    await _page.GotoAsync("https://example.com");
+    
+    // Pause test and open Inspector with "Pick Locator" feature
+    Console.WriteLine("\n✅ Browser Opened with Inspector...");
+    await _page.PauseAsync();  // Inspector opens here
+    
+    // Test resumes after Inspector is closed
+    Assert.That(true, Is.True);
+}
+```
+
+For more details, see [Debugging section in TESTING.md](./TESTING.md#-debugging-tests).
+
 ## ⚙️ Configuration
 
 ### Configuration Files

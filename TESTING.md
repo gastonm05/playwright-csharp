@@ -630,6 +630,89 @@ public class SpecificTests : MyTests
 
 ## 🐛 Debugging Tests
 
+### Use Playwright Inspector for Locator Selection
+
+The **Playwright Inspector** allows you to interactively inspect and select elements while tests are running. This is useful for:
+- Finding element locators visually
+- Debugging element visibility issues
+- Recording test interactions
+
+#### How to Enable Playwright Inspector
+
+Add `await _page!.PauseAsync();` to any test where you want to inspect elements:
+
+```csharp
+[Test]
+public async Task Test_NavigateToHomePage()
+{
+    // Arrange & Act
+    await _homePage!.NavigateAsync();
+    var isLoaded = await _homePage.IsLoadedAsync();
+    var heading = await _homePage.GetHeadingAsync();
+    
+    // Open Playwright Inspector - test will pause here
+    Console.WriteLine("\n✅ Browser Opened with Inspector...");
+    await _page!.PauseAsync(); // Inspector is opened here
+    
+    // After resuming from the Inspector, the test continues...
+    // Assert
+    Assert.That(isLoaded, Is.True, "Home page should be loaded");
+    Assert.That(heading, Does.Contain("Welcome to the-internet"), "Home page heading should be displayed");
+}
+```
+
+#### Running Tests with Inspector
+
+Run your test normally - the browser will launch and pause at the `PauseAsync()` call:
+
+```bash
+# Run the test with the inspector
+dotnet test --filter "Test_NavigateToHomePage"
+
+# Or from VS Code Test Explorer
+# Right-click the test → Run Test
+```
+
+#### Using the Inspector
+
+When the test pauses:
+1. **The Playwright Inspector window opens** with the page displayed
+2. **Click the "Pick Locator" button** (or use the shortcut) to select elements
+3. **Click elements on the page** to get their locator strings
+4. **The locator is copied to your clipboard** - paste it in your Page Object Model
+5. **Click "Resume" button** to continue the test
+
+#### Example: Finding a Login Button Locator
+
+```csharp
+[Test]
+public async Task Test_LoginWithInspector()
+{
+    // Arrange
+    await _loginPage!.NavigateAsync();
+    await _loginPage.IsLoadedAsync();
+
+    // PAUSE HERE - Use Inspector to find the login button selector
+    await _page!.PauseAsync();
+
+    // Act - Once you've found the selector, click it
+    await _page.ClickAsync("button[type='submit']");  // Locator from Inspector
+    
+    // Assert
+    var errorMessage = await _loginPage.GetErrorMessageAsync();
+    Assert.That(errorMessage, Is.Not.Empty);
+}
+```
+
+#### Best Practices
+
+- Use `PauseAsync()` **temporarily** during development to find locators
+- **Remove or comment out** `PauseAsync()` before committing to version control
+- Inspect **headless mode disabled** for better visibility: set `"Headless": false` in `appsettings.Development.json`
+- Use the Inspector **in Development environment** for interactive debugging
+
+---
+
 ### Enable Detailed Logging
 
 ```bash
