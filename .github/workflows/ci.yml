@@ -28,12 +28,6 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
     
-    - name: Install Playwright CLI Tool
-      run: dotnet tool install --global Microsoft.Playwright.CLI
-    
-    - name: Install Playwright browsers
-      run: dotnet playwright install
-    
     - name: Run API Tests
       run: dotnet test APITests/APITests.csproj --no-build --configuration Release --logger "console;verbosity=detailed"
     
