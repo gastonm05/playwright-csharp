@@ -32,9 +32,17 @@ jobs:
       run: dotnet build --no-restore --configuration Release
     
     - name: Install Playwright Browsers
+      shell: pwsh
       run: |
-        dotnet tool install --global Microsoft.Playwright.CLI
-        playwright install --with-deps
+        $scriptPath = Get-ChildItem -Path "bin/Release" -Filter "playwright.ps1" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($scriptPath) {
+          Write-Host "Running Playwright install script from: $($scriptPath.FullName)"
+          & $scriptPath.FullName install --with-deps
+        } else {
+          Write-Host "Playwright script not found, trying global tool..."
+          dotnet tool install --global Microsoft.Playwright.CLI
+          playwright install --with-deps
+        }
     
     - name: Run API Tests
       run: dotnet test APITests/APITests.csproj --no-build --configuration Release --logger "console;verbosity=detailed"

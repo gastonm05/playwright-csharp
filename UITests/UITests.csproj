@@ -31,7 +31,7 @@
   <!-- Install Playwright browsers after build -->
   <Target Name="InstallPlaywrightBrowsers" AfterTargets="Build">
     <Message Text="Installing Playwright browsers..." Importance="high" />
-    <Exec Command="playwright install" ContinueOnError="true" />
+    <Exec Command="pwsh -Command &quot;$playwrightPath = Get-ChildItem -Path 'bin' -Filter 'playwright.ps1' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1; if ($playwrightPath) { &amp; $playwrightPath.FullName install --with-deps } else { playwright install --with-deps }quot;" ContinueOnError="true" />
   </Target>
 
 </Project>
