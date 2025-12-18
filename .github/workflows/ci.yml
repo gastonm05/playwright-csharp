@@ -33,13 +33,8 @@ jobs:
     
     - name: Install Playwright Browsers
       run: |
-        $playwrightPath = Get-ChildItem -Path "bin/Release" -Filter "playwright.ps1" -Recurse | Select-Object -First 1
-        if ($playwrightPath) {
-          & $playwrightPath.FullName install --with-deps
-        } else {
-          dotnet tool install --global Microsoft.Playwright.CLI
-          playwright install --with-deps
-        }
+        dotnet tool install --global Microsoft.Playwright.CLI
+        playwright install --with-deps
     
     - name: Run API Tests
       run: dotnet test APITests/APITests.csproj --no-build --configuration Release --logger "console;verbosity=detailed"
