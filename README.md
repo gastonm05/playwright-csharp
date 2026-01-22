@@ -401,13 +401,9 @@ For issues or questions:
 3. Check test output and GitHub Actions logs
 4. Review framework documentation
 
-## 📄 License
-
-[Your License Here]
-
 ## 👤 Authors
 
-- **Gaston** - Project Maintainer
+- **Gaston Mugas** - Project Maintainer
 
 ---
 
